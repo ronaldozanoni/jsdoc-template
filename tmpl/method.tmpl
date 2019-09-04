@@ -8,6 +8,7 @@
     <h2>Constructor</h2>
   <?js } ?>
 
+  <?js if (!data.hideconstructor) { ?>
   <span class='name-container'>
     <a class="link-icon" href="<?js= '#' + data.id ?>">
       <svg height="20" width="20" style="fill: black;">
@@ -18,6 +19,7 @@
       <?js= data.attribs + (data.kind === 'class' ? 'new ' : '') + name + (data.signature || '') ?>
     </h4>
   </span>
+  <?js } ?>
 
   <?js if (data.summary) { ?>
     <p class="summary">
