@@ -67,6 +67,10 @@ function needsSignature(doclet) {
   var i, l;
   var needsSig = false;
 
+  if (doclet.hideconstructor) {
+    return false;
+  }
+
   // function and class definitions always get a signature
   if (doclet.kind === 'function' || doclet.kind === 'class') {
     needsSig = true;
@@ -201,7 +205,7 @@ function addSignatureTypes(f) {
 function addAttribs(f) {
   var attribs = helper.getAttribs(f);
   var attribsString = buildAttribsString(attribs);
-
+  
   f.attribs = util.format('<span class="type-signature">%s</span>', attribsString);
 }
 
