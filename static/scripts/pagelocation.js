@@ -60,7 +60,7 @@ function highlightActiveHash(event) {
 function highlightActiveSection() {
   var pageId = getCurrentSectionName();
 
-  $('#' + pageId + '-nav').addClass('active');
+  $('#' + pageId.replace('tutorial-', '') + '-nav').addClass('active');
 }
 
 function getCurrentSectionName() {
