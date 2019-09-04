@@ -112,7 +112,7 @@ var resources = templates.resources;
   </nav>
 
   <div id="main">
-    <?js if (title != 'Home' && title.indexOf('Tutorial: ') !== 0) { ?>
+    <?js if (title != 'Home' && typeof isTutorial == 'undefined') { ?>
       <h1 class="page-title">
         <?js= title ?>
       </h1>

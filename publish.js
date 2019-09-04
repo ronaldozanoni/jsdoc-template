@@ -24,8 +24,29 @@ function find(spec) {
   return helper.find(data, spec);
 }
 
-function tutoriallink(tutorial) {
-  return helper.toTutorial(tutorial, null, {tag: 'em', classname: 'disabled', prefix: 'Tutorial: '});
+function tutorialToTitle(name) {
+  return name
+    .replace('/', '_')
+    .replace(/[\d+] - /, '');
+}
+
+function tutorialToName(name) {
+  return name
+    .replace('/', '_')
+    .replace(/[\d+] - /, '')
+    .replace(/ /g, '_');
+}
+
+function tutorialToUrl(name) {
+  var _name = tutorialToName(name);
+  return _name + '.html';
+}
+
+function tutoriallink(name) {
+  var title = tutorialToTitle(name);
+  var url = tutorialToUrl(name);
+  // return helper.toTutorial(tutorial, null, {tag: 'em', classname: 'disabled', prefix: ''});
+  return `<a href="${url}">${title}</a>`;
 }
 
 function getAncestorLinks(doclet) {
@@ -286,25 +307,31 @@ function attachModuleSymbols(doclets, modules) {
   });
 }
 
-function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
+function buildMemberNav(items, itemHeading, itemsSeen, linktoFn, nameToFn) {
   var nav = '';
   var itemsNav = '';
+
+  if (!nameToFn) {
+    nameToFn = function(name) {
+      return name.replace('/', '_');
+    };
+  }
 
   if (items && items.length) {
     items.forEach(function (item) {
       var methods = find({kind: 'function', memberof: item.longname});
 
       if (!hasOwnProp.call(item, 'longname')) {
-        itemsNav += '<li id="' + item.name.replace('/', '_') + '-nav">' + linktoFn('', item.name);
+        itemsNav += '<li id="' + nameToFn(item.name) + '-nav">' + linktoFn('', item.name);
         itemsNav += '</li>';
       } else if (!hasOwnProp.call(itemsSeen, item.longname)) {
         // replace '/' in url to match ID in some section
-        itemsNav += '<li id="' + item.name.replace('/', '_') + '-nav">' + linktoFn(item.longname, item.name.replace(/^module:/, ''));
+        itemsNav += '<li id="' + nameToFn(item.name) + '-nav">' + linktoFn(item.longname, item.name.replace(/^module:/, ''));
         if (methods.length) {
           itemsNav += "<ul class='methods'>";
 
           methods.forEach(function (method) {
-            itemsNav += '<li data-type="method" id="' + item.name.replace('/', '_') + '-' + method.name + '-nav">';
+            itemsNav += '<li data-type="method" id="' + nameToFn(item.name) + '-' + method.name + '-nav">';
             itemsNav += linkto(method.longname, method.name);
             itemsNav += '</li>';
           });
@@ -325,9 +352,9 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn) {
 }
 
 // TODO: as needed, comment back in later
-// function linktoTutorial(longName, name) {
-//   return tutoriallink(name);
-// }
+function linktoTutorial(longName, name) {
+  return tutoriallink(name);
+}
 
 // function linktoExternal(longName, name) {
 //   return linkto(longName, name.replace(/(^"|"$)/g, ''));
@@ -351,8 +378,9 @@ function buildNav(members) {
   var nav = '';
   var globalNav = '';
   var seen = {};
-  // var seenTutorials = {};
+  var seenTutorials = {};
 
+  nav += buildMemberNav(members.tutorials, 'API', seenTutorials, linktoTutorial, tutorialToName);
   nav += buildMemberNav(members.classes, 'Classes', seen, linkto);
   nav += buildMemberNav(members.modules, 'Modules', {}, linkto);
   // TODO: as needed, comment back in later
@@ -646,9 +674,10 @@ exports.publish = function (taffyData, opts, tutorials) {
   function generateTutorial(title, tutorial, filename) {
     var tutorialData = {
       title: title,
-      header: tutorial.title,
+      header: title,
       content: tutorial.parse(),
-      children: tutorial.children
+      children: tutorial.children,
+      isTutorial: true
     };
 
     var tutorialPath = path.join(outdir, filename);
@@ -662,7 +691,7 @@ exports.publish = function (taffyData, opts, tutorials) {
   // tutorials can have only one parent so there is no risk for loops
   function saveChildren(node) {
     node.children.forEach(function (child) {
-      generateTutorial('Tutorial: ' + child.title, child, helper.tutorialToUrl(child.name));
+      generateTutorial(child.title, child, tutorialToUrl(child.name));
       saveChildren(child);
     });
   }
