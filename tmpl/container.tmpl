@@ -14,7 +14,7 @@
 
 <section>
   <header>
-    <?js if (!doc.longname || doc.kind !== 'module') { ?>
+    <?js if (doc.name !== title && (!doc.longname || doc.kind !== 'module')) { ?>
       <h2>
         <?js if (doc.ancestors && doc.ancestors.length) { ?>
           <span class="ancestors"><?js= doc.ancestors.join('') ?></span>
