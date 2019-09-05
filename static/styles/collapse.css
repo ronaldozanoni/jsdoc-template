@@ -20,8 +20,8 @@
     margin-bottom: 10px;
   }
 
-  nav > ul > li:hover > a,
-  nav > ul > li.active > a {
-    margin-bottom: 15px;
+  nav > ul > li:hover > ul,
+  nav > ul > li.active > ul {
+    margin-top: 15px;
   }
 }
