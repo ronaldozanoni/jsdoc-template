@@ -37,6 +37,16 @@ function tutorialToName(name) {
     .replace(/ /g, '_');
 }
 
+// function typedefToName(name) {
+//   return name
+//     .replace('/', '_')
+//     .replace('global.html#', '');
+// }
+
+// function typedefToUrl(name) {
+//   return helper.getUniqueFilename(typedefToName(name));
+// }
+
 function tutorialToUrl(name) {
   var _name = tutorialToName(name);
   return _name + '.html';
@@ -45,9 +55,15 @@ function tutorialToUrl(name) {
 function tutoriallink(name) {
   var title = tutorialToTitle(name);
   var url = tutorialToUrl(name);
-  // return helper.toTutorial(tutorial, null, {tag: 'em', classname: 'disabled', prefix: ''});
+
   return `<a href="${url}">${title}</a>`;
 }
+
+// function typedeflink(name) {
+//   var url = typedefToUrl(name);
+
+//   return `<a href="${url}">${name}</a>`;
+// }
 
 function getAncestorLinks(doclet) {
   return helper.getAncestorLinks(data, doclet);
@@ -336,7 +352,7 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn, nameToFn) {
 
           methods.forEach(function (method) {
             itemsNav += '<li data-type="method" id="' + nameToFn(item.name) + '-' + method.name + '-nav">';
-            itemsNav += linkto(method.longname, method.name);
+            itemsNav += linktoFn(method.longname, method.name);
             itemsNav += '</li>';
           });
 
@@ -359,6 +375,10 @@ function buildMemberNav(items, itemHeading, itemsSeen, linktoFn, nameToFn) {
 function linktoTutorial(longName, name) {
   return tutoriallink(name);
 }
+
+// function linktoTypeDef(longName, name) {
+//   return typedeflink(name);
+// }
 
 // function linktoExternal(longName, name) {
 //   return linkto(longName, name.replace(/(^"|"$)/g, ''));
@@ -383,10 +403,12 @@ function buildNav(members) {
   var globalNav = '';
   var seen = {};
   var seenTutorials = {};
+  var seenDefinitions = {};
 
   nav += buildMemberNav(members.tutorials, 'API', seenTutorials, linktoTutorial, tutorialToName);
   nav += buildMemberNav(members.classes, 'Classes', seen, linkto);
   nav += buildMemberNav(members.modules, 'Modules', {}, linkto);
+  // nav += buildMemberNav(members.typedefs, 'Type Definitions', seenDefinitions, linktoTypeDef, typedefToName);
   // TODO: as needed, comment back in later
   // nav += buildMemberNav(members.externals, 'Externals', seen, linktoExternal);
   // nav += buildMemberNav(members.events, 'Events', seen, linkto);
@@ -397,7 +419,8 @@ function buildNav(members) {
 
   if (members.globals.length) {
     members.globals.forEach(function (g) {
-      if (g.kind !== 'typedef' && !hasOwnProp.call(seen, g.longname)) {
+      // g.kind !== 'typedef' && 
+      if (!hasOwnProp.call(seen, g.longname)) {
         globalNav += '<li>' + linkto(g.longname, g.name) + '</li>';
       }
       seen[g.longname] = true;
@@ -405,9 +428,9 @@ function buildNav(members) {
 
     if (!globalNav) {
       // turn the heading into a link so you can actually get to the global page
-      nav += '<h3 id="global-nav">' + linkto('global', 'Global') + '</h3>';
+      nav += '<h3 id="global-nav">' + linkto('global', 'Models') + '</h3>';
     } else {
-      nav += '<h3 id="global-nav">Global</h3><ul>' + globalNav + '</ul>';
+      nav += '<h3 id="global-nav">Models</h3><ul>' + globalNav + '</ul>';
     }
   }
 
@@ -593,6 +616,18 @@ exports.publish = function (taffyData, opts, tutorials) {
   var members = helper.getMembers(data);
 
   members.tutorials = tutorials.children;
+  // members.typedefs = helper.find(data, {kind: 'typedef'});
+
+  // members.typedefs = members.typedefs.map(function(typedef) {
+  //   typedef.name = typedefToName(typedef.name);
+  //   typedef.longname = typedefToName(typedef.longname);
+
+  //   return typedef;
+  // });
+
+  // members.globals = members.globals.filter(function (g) {
+  //   return g.kind !== 'typedef';
+  // });
 
   // output pretty-printed source files by default
   var outputSourceFiles = conf.default && conf.default.outputSourceFiles !== false;
@@ -635,6 +670,7 @@ exports.publish = function (taffyData, opts, tutorials) {
   var mixins = taffy(members.mixins);
   var externals = taffy(members.externals);
   var interfaces = taffy(members.interfaces);
+  // var typedefs = taffy(members.typedefs);
 
   Object.keys(helper.longnameToUrl).forEach(function (longname) {
     var myModules = helper.find(modules, {longname: longname});
@@ -672,6 +708,12 @@ exports.publish = function (taffyData, opts, tutorials) {
     if (myInterfaces.length) {
       generate('Interface', myInterfaces[0].name, myInterfaces, helper.longnameToUrl[longname]);
     }
+
+    // var myTypeDefs = helper.find(typedefs, {longname: longname});
+
+    // if (myTypeDefs.length) {
+    //   generate('TypeDef', myTypeDefs[0].name, myTypeDefs, typedefToUrl(helper.longnameToUrl[longname]));
+    // }
   });
 
   // TODO: move the tutorial functions to templateHelper.js
