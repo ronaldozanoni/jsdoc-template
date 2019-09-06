@@ -16,14 +16,22 @@ $(document).ready(function () {
   }
 
   // function to scroll to anchor when clicking an anchor linl
-  $('a[href*="#"]:not([href="#"])').click(function () {
+  $('a[href*="#"]:not([href="#"])').click(function (e) {
     /* eslint-disable no-invalid-this */
     if (location.pathname.replace(/^\//, '') === this.pathname.replace(/^\//, '') && location.hostname === this.hostname) {
       target = $(this.hash);
       target = target.length ? target : $('[name=' + this.hash.slice(1) + ']');
+      var img = $('#main img');
+
       if (target.length) {
+        var scrollTop = target.offset().top;
+        
+        // Special case for the How To Use page.
+        if (img && img.length) {
+          scrollTop += document.documentElement.scrollTop;
+        }
         $('html, body').animate({
-          scrollTop: target.offset().top
+          scrollTop: scrollTop,
         }, 1000);
       }
     }
