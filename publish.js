@@ -405,7 +405,7 @@ function buildNav(members) {
   var seenTutorials = {};
   var seenDefinitions = {};
 
-  nav += buildMemberNav(members.tutorials, 'API', seenTutorials, linktoTutorial, tutorialToName);
+  nav += buildMemberNav(members.tutorials, 'Concepts and example', seenTutorials, linktoTutorial, tutorialToName);
   nav += buildMemberNav(members.classes, 'Classes', seen, linkto);
   nav += buildMemberNav(members.modules, 'Modules', {}, linkto);
   // nav += buildMemberNav(members.typedefs, 'Type Definitions', seenDefinitions, linktoTypeDef, typedefToName);
