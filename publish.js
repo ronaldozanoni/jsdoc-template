@@ -27,13 +27,13 @@ function find(spec) {
 function tutorialToTitle(name) {
   return name
     .replace('/', '_')
-    .replace(/[\d+] - /, '');
+    .replace(/[\d]+ - /, '');
 }
 
 function tutorialToName(name) {
   return name
     .replace('/', '_')
-    .replace(/[\d+] - /, '')
+    .replace(/[\d]+ - /, '')
     .replace(/ /g, '_');
 }
 
