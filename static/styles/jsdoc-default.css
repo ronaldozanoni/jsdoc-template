@@ -822,6 +822,10 @@ td table.params, td table.props {
   display: block !important;
 }
 
+.search-wrapper .algolia-autocomplete .ds-dropdown-menu .ds-suggestions {
+  max-height: 70vh;
+}
+
 .search-wrapper svg {
   position: absolute;
   left: 12px;
