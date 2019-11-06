@@ -21,6 +21,10 @@ body {
     line-height: 160%;
 }
 
+body.with-search nav {
+  top: 92px;
+}
+
 a, a:active {
     color: #0095dd;
     text-decoration: none;
@@ -788,7 +792,7 @@ td table.params, td table.props {
     position: fixed;
     top: 0px;
     left: 0px;
-    padding: 10px 10px 0 10px;
+    padding: 12px;
     z-index: 999;
     width: 300px;
     min-height: 42px;
@@ -809,22 +813,38 @@ td table.params, td table.props {
 }
 
 .search-wrapper {
-    display: inline-block;
+    display: block;
     position: relative;
+    margin-top: 12px;
+}
+
+.search-wrapper .algolia-autocomplete {
+  display: block !important;
 }
 
 .search-wrapper svg {
-    position: absolute;
-    left: 0px;
+  position: absolute;
+  left: 12px;
+  top: 10px;
+  z-index: 1;
+  fill: #444;
+  width: 16px;
 }
 
 input.search-input {
-    background: transparent;
+    background: #fff;
     box-shadow: 0;
     border: 0;
     border-bottom: 1px solid #c7c7c7;
-    padding: 7px 15px 12px 35px;
+    padding: 5px 10px 5px 35px;
     margin: 0 auto;
+    border: 1px solid #ced4da;
+    border-radius: .25rem;
+    color: #495057;
+    font-size: 1rem;
+    font-weight: 400;
+    line-height: 1.5;    
+    width: 100%;
 }
 
 
